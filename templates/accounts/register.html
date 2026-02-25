@@ -1,0 +1,13 @@
+<h2>Register</h2>
+
+{% if form.errors %}
+    <div style="color: red;">
+        {{ form.errors}}
+    </div>
+{% endif %}
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+</form>
+<a href="{% url 'login' %}">Login</a>
