@@ -48,5 +48,26 @@ def user_logout(request):
 
 @login_required
 def dashboard(request):
-    return render(request, "accounts/dashboard.html")
+    user = request.user
+
+    if hasattr(user, "patient"):
+        return redirect("patient_dashboard")
+    elif hasattr(user, "doctor"):
+        return redirect("doctor_dashboard")
+    else:
+        return redirect("login")
+    
+
+@login_required
+def patient_dashboard(request):
+    # Restrict Each Dashboard
+    if not hasattr(request.user, 'patient'):
+        return redirect("dashboard")
+    return render(request,"accounts/patient_dashboard.html")
+
+@login_required
+def doctor_dashboard(request):
+    if not hasattr(request.user, "doctor"):
+        return redirect("dashboard")
+    return render(request, "accounts/doctor_dashboard.html")
 
