@@ -25,4 +25,14 @@ class Doctor(models.Model):
         return f"Doctor - {self.user.username}"
     
 
+class Appointment(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 
+    appointment_date = models.DateField()
+    appointment_time = models.TimeField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.patient.user.username} -> {self.doctor.user.username}"
