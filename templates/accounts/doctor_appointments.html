@@ -1,0 +1,17 @@
+<h2>My Appointments</h2>
+
+<table border="1">
+<tr>
+    <th>Patient</th>
+    <th>Date</th>
+    <th>Time</th>
+</tr>
+
+{% for appointment in appointments %}
+<tr>
+    <td>{{ appointment.patient.user.username }}</td>
+    <td>{{ appointment.appointment_date }}</td>
+    <td>{{ appointment.appointment_time }}</td>
+</tr>
+{% endfor %}
+</table>

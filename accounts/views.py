@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm
-from .models import Patient, Doctor
+from .forms import RegisterForm, AppointmentForm
+from .models import Patient, Doctor,Appointment
 
 # Create your views here.
 
@@ -70,4 +70,31 @@ def doctor_dashboard(request):
     if not hasattr(request.user, "doctor"):
         return redirect("dashboard")
     return render(request, "accounts/doctor_dashboard.html")
+
+@login_required
+def book_appointment(request):
+    patient = Patient.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.patient = patient
+            appointment.save()
+
+            return redirect("patient_dashboard")
+    
+    else:
+        form = AppointmentForm()
+
+    return render(request, "accounts/book_appointment.html", {"form": form})
+
+@login_required
+def doctor_appointments(request):
+    doctor = Doctor.objects.get(user=request.user)
+
+    appointments = Appointment.objects.filter(doctor=doctor)
+
+    return render(request, "accounts/doctor_appointments.html", {"appointments": appointments})
 

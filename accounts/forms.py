@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Appointment
 
 class RegisterForm(UserCreationForm):
     ROLE_CHOICES = {
@@ -14,4 +15,8 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ['username', 'password1', 'password2', 'role']
 
-        
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['doctor', 'appointment_date', 'appointment_time']
+

@@ -8,6 +8,9 @@ urlpatterns = [
     path("dashboard/", views.dashboard, name="dashboard"),
     path("patient/dashboard/", views.patient_dashboard, name="patient_dashboard"),
     path("doctor/dashboard/", views.doctor_dashboard, name="doctor_dashboard"),
+    path("book-appointment/", views.book_appointment, name="book_appointment"),
+    path("doctor-appointments/", views.doctor_appointments, name="doctor_appointments"),
+
     
 ]
 
