@@ -98,3 +98,12 @@ def doctor_appointments(request):
 
     return render(request, "accounts/doctor_appointments.html", {"appointments": appointments})
 
+@login_required
+def patient_appointments(request):
+    patient = Patient.objects.get(user=request.user)
+
+    appointments = Appointment.objects.filter(patient=patient)
+    
+    return render(request, "accounts/patient_appointments.html", {
+        "appointments" : appointments
+    })

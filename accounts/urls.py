@@ -10,7 +10,8 @@ urlpatterns = [
     path("doctor/dashboard/", views.doctor_dashboard, name="doctor_dashboard"),
     path("book-appointment/", views.book_appointment, name="book_appointment"),
     path("doctor-appointments/", views.doctor_appointments, name="doctor_appointments"),
-
+    path("my-appointments/", views.patient_appointments, name="patient_appointments"),
+    
     
 ]
 
