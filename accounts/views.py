@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -107,3 +107,13 @@ def patient_appointments(request):
     return render(request, "accounts/patient_appointments.html", {
         "appointments" : appointments
     })
+
+
+def update_appointment_status(request, appointment_id, status):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    appointment.status = status
+    appointment.save()
+
+    return redirect("doctor_appiontments")
+

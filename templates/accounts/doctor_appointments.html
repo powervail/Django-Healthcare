@@ -6,6 +6,7 @@
     <th>Date</th>
     <th>Time</th>
     <th>Status</th>
+    <th>Action</th>
 </tr>
 
 {% for appointment in appointments %}
@@ -14,6 +15,11 @@
     <td>{{ appointment.appointment_date }}</td>
     <td>{{ appointment.appointment_time }}</td>
     <td>{{ appointment.status }}</td>
+    <td>
+        <a href="{% url 'update_appointment_status' appointment.id 'approved' %}">Approve</a>
+        <a href="{% url 'update_appointment_status' appointment.id 'cancelled' %}"></a>
+    </td>
+
 </tr>
 {% endfor %}
 </table>
