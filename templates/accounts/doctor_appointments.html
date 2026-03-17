@@ -5,6 +5,7 @@
     <th>Patient</th>
     <th>Date</th>
     <th>Time</th>
+    <th>Status</th>
 </tr>
 
 {% for appointment in appointments %}
@@ -12,6 +13,7 @@
     <td>{{ appointment.patient.user.username }}</td>
     <td>{{ appointment.appointment_date }}</td>
     <td>{{ appointment.appointment_time }}</td>
+    <td>{{ appointment.status }}</td>
 </tr>
 {% endfor %}
 </table>

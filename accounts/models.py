@@ -26,11 +26,25 @@ class Doctor(models.Model):
     
 
 class Appointment(models.Model):
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 
     appointment_date = models.DateField()
     appointment_time = models.TimeField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
