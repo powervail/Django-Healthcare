@@ -109,6 +109,21 @@ def patient_appointments(request):
     })
 
 
+@login_required
+def cancel_appointment(request, appoointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_ide)
+
+    # Security check: only owner can cancel
+    if appointment.patient.user != request.user:
+        return redirect("patient_dashboard")
+
+    # Allow cancel only if pending
+    if appointment.status == "pending":
+        appointment.status ="cancelled"
+        appointment.save()
+
+    return redirect("patient_appointments")
+
 def update_appointment_status(request, appointment_id, status):
     appointment = get_object_or_404(Appointment, id=appointment_id)
 
