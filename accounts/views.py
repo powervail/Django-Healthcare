@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, AppointmentForm
 from .models import Patient, Doctor,Appointment
+from django.contrib import messages
 
 # Create your views here.
 
@@ -80,8 +81,27 @@ def book_appointment(request):
 
         if form.is_valid():
             appointment = form.save(commit=False)
+            
+            doctor = appointment.doctor
+            time = appointment.appointment_time
+
+            # Check doctor availability
+            if not (doctor.available_from <= time <= doctor.available_to):
+                messages.error(request, "Doctor not available at this time")
+                return redirect("book_appointment")
+            
+            # Prevent double booking
+            exists = Appointment.objects.filter(doctor=doctor, appointment_date=appointment.appointment_date, appointment_time=time).exists()
+
+            if exists:
+                messages.error(request, "This time slot is already booked")
+                return redirect("book_appointment")
+            
+            # Save appointment
             appointment.patient = patient
             appointment.save()
+
+            messages.success(request, "Appointment booked successfully")
 
             return redirect("patient_dashboard")
     
