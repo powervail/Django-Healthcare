@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, AppointmentForm
 from .models import Patient, Doctor,Appointment
 from django.contrib import messages
-
+from datetime import timedelta, datetime
 # Create your views here.
 
 
@@ -76,22 +76,39 @@ def doctor_dashboard(request):
 def book_appointment(request):
     patient = Patient.objects.get(user=request.user)
 
+    form = AppointmentForm(request.POST or None)
+
+    slots = []
+    
     if request.method == 'POST':
-        form = AppointmentForm(request.POST)
 
         if form.is_valid():
             appointment = form.save(commit=False)
             
             doctor = appointment.doctor
-            time = appointment.appointment_time
+            date = appointment.appointment_date
 
-            # Check doctor availability
-            if not (doctor.available_from <= time <= doctor.available_to):
-                messages.error(request, "Doctor not available at this time")
+            # Get selected slot from POST
+            selected_time = request.POST.get("time_slot")
+
+            if selected_time:
+                selected_time = datetime.strptime(selected_time, "%H:%M").time()
+
+                # Generated slots
+                slots = generate_time_slots(
+                    doctor.available_from,
+                    doctor.available_to
+                )
+
+            # Check if selected is valid
+            if selected_time not in slots:
+                messages.error(request, "Invaild time slot")
                 return redirect("book_appointment")
             
+
+            
             # Prevent double booking
-            exists = Appointment.objects.filter(doctor=doctor, appointment_date=appointment.appointment_date, appointment_time=time).exists()
+            exists = Appointment.objects.filter(doctor=doctor, appointment_date=appointment.appointment_date, appointment_time=selected_time).exists()
 
             if exists:
                 messages.error(request, "This time slot is already booked")
@@ -99,16 +116,23 @@ def book_appointment(request):
             
             # Save appointment
             appointment.patient = patient
+            appointment.appointment_time = selected_time
             appointment.save()
 
             messages.success(request, "Appointment booked successfully")
 
             return redirect("patient_dashboard")
     
-    else:
-        form = AppointmentForm()
+    # If doctor selected, generate slots
+    if form.is_bound and form.is_valid():
+        doctor = form.cleaned_data.get("doctor")
+        if doctor:
+            slots = generate_time_slots(
+                doctor.available_form,
+                doctor.available_to
+            )
 
-    return render(request, "accounts/book_appointment.html", {"form": form})
+    return render(request, "accounts/book_appointment.html", {"form": form, "slots":slots})
 
 @login_required
 def doctor_appointments(request):
@@ -152,3 +176,13 @@ def update_appointment_status(request, appointment_id, status):
 
     return redirect("doctor_appiontments")
 
+def generate_time_slots(start, end):
+    slots = []
+    current = datetime.combine(datetime.today(), start)
+    end_time = datetime.combine(datetime.today(), end)
+
+    while current <= end_time:
+        slots.append(current.time())
+        current += timedelta(minutes=30)
+
+    return slots

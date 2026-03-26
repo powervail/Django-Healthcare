@@ -18,5 +18,6 @@ class RegisterForm(UserCreationForm):
 class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ['doctor', 'appointment_date', 'appointment_time']
+        fields = ['doctor', 'appointment_date']
+
 
