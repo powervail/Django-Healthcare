@@ -126,12 +126,21 @@ def book_appointment(request):
     # If doctor selected, generate slots
     if form.is_bound and form.is_valid():
         doctor = form.cleaned_data.get("doctor")
-        if doctor:
-            slots = generate_time_slots(
+        date = form.cleaned_data.get("appointment_date")
+        if doctor and date:
+            all_slots = generate_time_slots(
                 doctor.available_form,
                 doctor.available_to
             )
 
+            # Get already booked slots
+            booked_slots = Appointment.objects.filter(
+                doctor = doctor,
+                appointment_date = date
+            ).values_list("appointment_time", flat=True)
+
+            # Remove booked slots
+            slots = [slot for slot in all_slots if slot not in booked_slots]
     return render(request, "accounts/book_appointment.html", {"form": form, "slots":slots})
 
 @login_required
