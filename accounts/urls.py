@@ -13,6 +13,7 @@ urlpatterns = [
     path("my-appointments/", views.patient_appointments, name="patient_appointments"),
     path("appointment/<int:appointment_id>/<str:status>/", views.update_appointment_status, name="update_appointment_status"),
     path("cancel-appointment/<int:appointment_id>/", views.cancel_appointment, name="cancel_appointment"),
+    path("profile/", views.profile, name="profile"),
     
 ]
 

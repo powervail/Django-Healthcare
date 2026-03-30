@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm, AppointmentForm
+from .forms import RegisterForm, AppointmentForm, PatientProfileForm, DoctorProfileForm
 from .models import Patient, Doctor,Appointment
 from django.contrib import messages
 from datetime import timedelta, datetime
@@ -46,6 +46,36 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect("login")
+
+@login_required
+def profile(request):
+
+    user = request.user
+
+    if hasattr(user, "patient"):
+        profile = user.patient
+        form_class = PatientProfileForm
+
+    elif hasattr(user, "doctor"):
+        profile = user.doctor
+        form_class = DoctorProfileForm
+    
+    else:
+        return redirect("dashboard")
+    
+    if request.method == "POST":
+        form = form_class(request.POST, instance=profile)
+
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard")
+
+    else:
+        form = form_class(instance=profile)
+    
+    return render(request, "accounts/profile.html", {"form":form})
+
+        
 
 @login_required
 def dashboard(request):
@@ -176,6 +206,8 @@ def cancel_appointment(request, appoointment_id):
         appointment.save()
 
     return redirect("patient_appointments")
+
+
 
 def update_appointment_status(request, appointment_id, status):
     appointment = get_object_or_404(Appointment, id=appointment_id)
