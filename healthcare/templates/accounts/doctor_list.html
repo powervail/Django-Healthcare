@@ -1,0 +1,28 @@
+<h2>Doctors</h2>
+
+<form method="GET">
+    <input type="text" name="q" placeholder="Search spectialization" >
+    <button type="submit">Search</button>
+</form>
+
+<br>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>spectialization</th>
+        <th>Action</th>
+    </tr>
+
+    {% for doctor in doctors %}
+    <tr>
+        <td>Dr. {{ doctor.user.username }} </td>
+        <td>{{ doctor.specialization }}</td>
+        <td>
+            <a href="{% url 'book_appointment' %}?doctor={{ doctor.id }}">
+                Book
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

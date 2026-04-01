@@ -1,0 +1,23 @@
+<h2>Book Appointment</h2>
+{% if messages %}
+    {% for message in messages %}
+        <p style="color:red;">{{message}}</p>
+    {% endfor %}
+{% endif%}
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <label>Select Time Slot:</label>
+    <select name="time_slot" id="">
+        {% for slot in slots %}
+            <option value="{{ slot|time: 'H:i'}}">
+                {{ slot|time: "H:i"}}
+            </option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+    <button type="submit">Book Appointment</button>
+</form>
